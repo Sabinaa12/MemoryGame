@@ -5,27 +5,34 @@ export class Game extends PIXI.Container {
     private _square: Squares;
     private _app: PIXI.Application;
     private _tableSquares: Array<Squares>;
+    private _colorsArray: any[] =[];
+    private _squareNumber: number = 12;
 
     constructor(app: PIXI.Application) {
-
         super();
         this._app = app;
         this._tableSquares = new Array<Squares>();
+        this.generateColor();
         this.createTableGame();
+        
     }
 
-    private showSquare(): Squares {
-        this._square = new Squares();
-        this._square.createSquare();
-
+    private showSquare(id: number): Squares {
+        this._square = new Squares(id, this._colorsArray[Math.floor(Math.random() * 12)]);
         return this._square;
     }
 
     private createTableGame(): void {
         let xOffset: number = 0;
         let yOffset: number = 0;
-        for (let i = 0; i < 12; i++) {
-            let a = this.showSquare();
+        for (let i = 0; i < this._squareNumber; i++) {
+            let a = this.showSquare(i);
+            this._square._clickOnSquareHandler = (id:number,color:number) => {
+                 console.log("Click", id);
+                 color =this._colorsArray[0];
+                 console.log("Click", color);
+      
+            };
             this._tableSquares.push(a)
             this._tableSquares[i].name = i.toString();
 
@@ -41,8 +48,6 @@ export class Game extends PIXI.Container {
 
             }
 
-
-
             this._tableSquares[i].position.y = yOffset;
             this._tableSquares[i].position.x = this._tableSquares[i].position.x + xOffset * 150;
 
@@ -52,6 +57,17 @@ export class Game extends PIXI.Container {
         }
 
         this._app.stage.addChild(...this._tableSquares);
+     
+
 
     }
+
+    private generateColor(): void {
+        for(let i=0; i < this._squareNumber / 2; i++){
+            this._colorsArray[i] = this._colorsArray[this._squareNumber-1-i] ='0x' + Math.floor(Math.random()*16777215).toString(16);
+           
+        }
+        console.log("0x",...this._colorsArray);
+    }
+
 }
