@@ -1,5 +1,6 @@
 import { Squares } from './Squares';
 import * as PIXI from 'pixi.js'
+import gsap from "gsap";
 
 export class Game extends PIXI.Container {
     private _square: Squares;
