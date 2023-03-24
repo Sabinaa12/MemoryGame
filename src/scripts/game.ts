@@ -1,6 +1,5 @@
 import { Squares } from './Squares';
 import * as PIXI from 'pixi.js'
-import gsap from "gsap";
 
 export class Game extends PIXI.Container {
     private _square: Squares;
@@ -8,7 +7,8 @@ export class Game extends PIXI.Container {
     private _tableSquares: Array<Squares>;
     private _colorsArray: any[] = [];
     private _colorsUsedArray: any[] = [];
-
+    private _clickCounter: number = 0;
+    private _oldSquareId: number;
     private _squareNumber: number = 12;
 
 
@@ -42,14 +42,12 @@ export class Game extends PIXI.Container {
         let xOffset: number = 0;
         let yOffset: number = 0;
         for (let i = 0; i < this._squareNumber; i++) {
-            let a = this.showSquare(i);
-
-            this._square._clickOnSquareHandler = (id: number) => {
-                console.log("Click", id);
-            };
-            this._tableSquares.push(a)
+            let square = this.showSquare(i);
+            this._tableSquares.push(square)
             this._tableSquares[i].name = i.toString();
-
+            this._square._clickOnSquareHandler = (id: number) => {
+                this.squareClickHandler(id, i);
+            };
 
             if (i % 4 == 0 && i != 0) {
                 xOffset = 0;
@@ -74,6 +72,29 @@ export class Game extends PIXI.Container {
 
 
 
+    }
+    private squareClickHandler(id: number, i: number): void {
+        console.log("Click", id);
+        this._clickCounter++;
+        if (this._clickCounter == 2) {
+            this._clickCounter = 0;
+            this.checkPairOfColors(i);
+        }
+        console.log("ClickCounter", this._clickCounter);
+        this._oldSquareId = id;
+    }
+
+    private checkPairOfColors(index: number): void {
+        if (this._tableSquares[index].getColor() != this._tableSquares[this._oldSquareId].getColor()) {
+            for (let j = 0; j < this._squareNumber; j++) {
+                if (this._tableSquares[j]._wasFound == false) {
+                    this._tableSquares[j].resetSquaresToOriginalColor();
+                }
+            }
+        } else {
+            this._tableSquares[index]._wasFound = true;
+            this._tableSquares[this._oldSquareId]._wasFound = true;
+        }
     }
 
     private generateColor(): void {

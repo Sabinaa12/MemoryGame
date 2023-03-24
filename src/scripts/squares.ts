@@ -1,5 +1,6 @@
 
 import * as PIXI from 'pixi.js'
+import gsap from "gsap";
 
 export class Squares extends PIXI.Graphics {
     public _clickOnSquareHandler: Function;
@@ -7,6 +8,7 @@ export class Squares extends PIXI.Graphics {
     private _color: number;
     private _text: PIXI.Text;
     private _squareMask: PIXI.Graphics;
+    public _wasFound: boolean = false;
 
     constructor(id: number, color: number) {
         super();
@@ -18,12 +20,14 @@ export class Squares extends PIXI.Graphics {
         this.onClick();
 
     }
+    getColor() {
+        return this._color;
+    }
 
     private createSquare(color: any) {
         this.beginFill(color);
         this.drawRect(0, 0, 100, 100);
         this.endFill();
-        this.visible = true;
         this.interactive = true;
         this.buttonMode = true;
         this.createSquareText("?");
@@ -47,6 +51,13 @@ export class Squares extends PIXI.Graphics {
         this._squareMask.visible = false;
         this.addChild(this._squareMask);
 
+    }
+
+    public resetSquaresToOriginalColor(): void {
+        gsap.delayedCall(0.5, () => {
+            this._squareMask.visible = false;
+            this.interactive = true;
+        });
     }
 
 
